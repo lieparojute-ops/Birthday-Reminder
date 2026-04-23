@@ -63,7 +63,7 @@ class Birthday:
         else:
             message = f"{self.name}'s birthday is in {days} days"
 
-        # Add note to message if it exists
+        # Add note to message if it exists (optional!!!)
         if self.note.strip():
             message += f" ({self.note})"
 
@@ -72,8 +72,8 @@ class Birthday:
     def __str__(self):
         note_text = self.note if self.note.strip() else "No note"
         return (
-            f"Name: {self._name}, "
-            f"Birth date: {self._birth_date.strftime('%Y-%m-%d')}, "
+            f"Name: {self.name}, "
+            f"Birth date: {self.birth_date.strftime('%Y-%m-%d')}, "
             f"Notification type: {self.notification_type}, "
             f"Note: {note_text}"
         )
@@ -138,7 +138,9 @@ class User:
         return birthday.days_until_birthday()
 
     def get_today_birthdays(self):
-        return [birthday for birthday in self._birthdays if birthday.days_until_birthday() == 0]
+        return [birthday for birthday in self._birthdays
+                if birthday.days_until_birthday() == 0
+        ]
 
     def get_upcoming_birthdays(self, days=7):
         return [
@@ -150,7 +152,7 @@ class User:
 # Function to send notifications for today's birthdays
 # using factory to create notification based on birthday's notification type
 
-def send_today_notifications(self, factory):
+    def send_today_notifications(self, factory):
         today_birthdays = self.get_today_birthdays()
 
         for birthday in today_birthdays:
@@ -159,7 +161,7 @@ def send_today_notifications(self, factory):
             )
             notification.send(birthday) # Calls the correct send method depending on type
 
-def __str__(self):
+    def __str__(self):
         return (
             f"User: {self.username}, "
             f"Email: {self.email}, "
@@ -174,13 +176,16 @@ class NotificationService(ABC):
     def send(self, birthday):
         pass
 
+
 class ConsoleNotification(NotificationService):
     def send(self, birthday):
         print(birthday.get_reminder_text())
 
+
 class EmailNotification(NotificationService):
     def send(self, birthday):
         print(f"Sending email: {birthday.get_reminder_text()}")
+
 
 class SMSNotification(NotificationService):
     def send(self, birthday):
@@ -227,3 +232,7 @@ def main():
     print()
     print("Today's notifications:")
     user.send_today_notifications(factory)
+
+
+if __name__ == "__main__":
+    main()
