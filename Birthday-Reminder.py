@@ -206,18 +206,24 @@ def main():
     birthday = Birthday("Alice", "2006-04-30", notification_type="console")
     birthday_1 = Birthday("Bob", "1990-04-23", "Wish him a happy birthday!", "email")
 
+    user = User("Mantas", "mantas@example.com")
+    user.add_birthday(birthday)
+    user.add_birthday(birthday_1)
+
     factory = NotificationFactory()
 
-    print(birthday)
-    notification_1 = factory.create_notification(birthday.notification_type)
-    notification_1.send(birthday)
-
+    print(user)
     print()
 
-    print(birthday_1)
-    notification_2 = factory.create_notification(birthday_1.notification_type)
-    notification_2.send(birthday_1)
+    print("All birthdays:")
+    for item in user.get_all_birthdays():
+        print(item)
 
+    print()
+    print("Upcoming reminders:")
+    for item in user.get_upcoming_birthdays(30):
+        print(item.get_reminder_text())
 
-if __name__ == "__main__":
-    main()
+    print()
+    print("Today's notifications:")
+    user.send_today_notifications(factory)
