@@ -1,6 +1,7 @@
 
 from datetime import date, datetime
 from abc import ABC, abstractmethod
+import csv
 
 
 class Birthday:
@@ -204,6 +205,66 @@ class NotificationFactory:
             return EmailNotification()
         else:
             raise ValueError("Unknown notification type")
+        
+
+# Repository for saving and loading user data to/from a CSV file
+# encoding="utf-8" ensures that the file can handle a wide range of characters(eg. emojis) without causing encoding errors.
+
+class CsvRepository:
+    def __init__(self, file_name="user_data.csv"):
+        self.file_path = file_name
+
+    def save_users(self, users):
+        with open(self.file_path, "w", newline="", encoding="utf-8") as file:
+            writer = csv.writer(file)
+
+            writer.writerow([
+                "username",
+                "email",
+                "name",
+                "birth_date",
+                "note",
+                "notification_type"
+            ])
+
+            for user in users:
+                for birthday in user.birthdays:
+                    writer.writerow([
+                        user.username,
+                        user.email,
+                        birthday.name,
+                        birthday.birth_date.strftime("%Y-%m-%d"),
+                        birthday.note,
+                        birthday.notification_type
+                    ])
+
+    def load_users(self):
+        users = {}
+
+        try:
+            with open(self.file_path, "r", newline="", encoding="utf-8") as file:
+                reader = csv.DictReader(file)
+
+                for row in reader:
+                    username = row["username"]
+                    email = row["email"]
+
+                    if username not in users:
+                        users[username] = User(username, email)
+
+                    birthday = Birthday(
+                        row["name"],
+                        row["birth_date"],
+                        row["note"],
+                        row["notification_type"]
+                    )
+
+                    users[username].add_birthday(birthday)
+
+        except FileNotFoundError:
+            return []
+
+        return list(users.values())
 
 # Test cases
 
@@ -211,28 +272,49 @@ def main():
     birthday = Birthday("Alice", "2006-04-30", notification_type="console")
     birthday_1 = Birthday("Bob", "1990-04-23", "Wish him a happy birthday!", "email")
 
-    user = User("Mantas", "mantas@example.com")
-    user.add_birthday(birthday)
-    user.add_birthday(birthday_1)
+    birthday_2 = Birthday("Tomas", "2001-12-05", "Cousin", "sms")
+
+    user_1 = User("Mantas", "mantas@example.com")
+    user_1.add_birthday(birthday)
+    user_1.add_birthday(birthday_1)
+
+    user_2 = User("Ema", "ema@example.com")
+    user_2.add_birthday(birthday_2)
+
+    users = [user_1, user_2]
 
     factory = NotificationFactory()
+    repository = CsvRepository("user_data.csv") # the file will appear in the same folder as your Python file.
 
-    print(user)
-    print()
+    # Save users to CSV
+    repository.save_users(users) # If the file does not exist yet, Python creates it.
+    print("Data saved to CSV.\n")
 
-    print("All birthdays:")
-    for item in user.get_all_birthdays():
-        print(item)
 
-    print()
-    print("Upcoming reminders:")
-    for item in user.get_upcoming_birthdays(30):
-        print(item.get_reminder_text())
+    # The load_users method opens the CSV file, reads rows, recreates User objects
+    # recreates Birthday objects, returns a list of users.
+    loaded_users = repository.load_users()
 
-    print()
-    print("Today's notifications:")
-    user.send_today_notifications(factory)
+    print("Loaded users from CSV:")
+    for user in loaded_users:
+        print(user)
+        print()
+
+        print("All birthdays:")
+        for item in user.get_all_birthdays():
+            print(item)
+
+        print()
+        print("Upcoming reminders:")
+        for item in user.get_upcoming_birthdays(30):
+            print(item.get_reminder_text())
+
+        print()
+        print("Today's notifications:")
+        user.send_today_notifications(factory)
+        print("-" * 40)
 
 
 if __name__ == "__main__":
     main()
+

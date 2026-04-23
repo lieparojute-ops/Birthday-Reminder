@@ -1,0 +1,4 @@
+username,email,name,birth_date,note,notification_type
+Mantas,mantas@example.com,Alice,2006-04-30,,console
+Mantas,mantas@example.com,Bob,1990-04-23,Wish him a happy birthday!,email
+Ema,ema@example.com,Tomas,2001-12-05,Cousin,sms
