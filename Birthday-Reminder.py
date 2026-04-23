@@ -147,6 +147,25 @@ class User:
             if 0 <= birthday.days_until_birthday() <= days
         ]
 
+# Function to send notifications for today's birthdays
+# using factory to create notification based on birthday's notification type
+
+def send_today_notifications(self, factory):
+        today_birthdays = self.get_today_birthdays()
+
+        for birthday in today_birthdays:
+            notification = factory.create_notification( # Creates notification object
+                birthday.notification_type
+            )
+            notification.send(birthday) # Calls the correct send method depending on type
+
+def __str__(self):
+        return (
+            f"User: {self.username}, "
+            f"Email: {self.email}, "
+            f"Birthdays count: {len(self._birthdays)}" # Counts number of birthdays in the user's list
+        )
+
 
 # Notification system
 
