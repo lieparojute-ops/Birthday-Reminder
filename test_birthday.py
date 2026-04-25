@@ -62,7 +62,7 @@ class TestRepository(unittest.TestCase):
         self.assertEqual(len(loaded_users[0].birthdays), 1) # Check that the loaded user has one birthday
         self.assertEqual(loaded_users[0].username, "TestUser") # Check that the loaded user's username is correct
         self.assertEqual(loaded_users[0].birthdays[0].name, "Alice") # Check that the loaded birthday's name is correct
-        self.assertEqual(loaded_users[0].birthdays[0].birth_date, "2000-01-01") # Check that the loaded birthday's date is correct
+        self.assertEqual(loaded_users[0].birthdays[0].birth_date.strftime("%Y-%m-%d"),"2000-01-01") # Check that the loaded birthday's date is correct
 
 class TestNotificationFactory(unittest.TestCase):
 
