@@ -1,5 +1,6 @@
-import unittest
 import os
+import unittest
+
 from birthday_reminder import (
     Birthday,
     User,

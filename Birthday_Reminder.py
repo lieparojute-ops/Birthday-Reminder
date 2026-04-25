@@ -1,7 +1,6 @@
-
-from datetime import date, datetime
 from abc import ABC, abstractmethod
 import csv
+from datetime import date, datetime
 
 
 class Birthday:
@@ -42,7 +41,9 @@ class Birthday:
     @notification_type.setter
     def notification_type(self, value):
         if value not in ["email", "sms", "console"]:
-            raise ValueError("Notification type must be 'email', 'sms', or 'console'.")
+            raise ValueError(
+            "Notification type must be 'email', 'sms', or 'console'."
+            )
         self._notification_type = value
 
     def days_until_birthday(self):
@@ -376,6 +377,6 @@ def main():
         user.send_today_notifications(factory)
         print("-" * 40)
 
+
 if __name__ == "__main__":
     main()
-
