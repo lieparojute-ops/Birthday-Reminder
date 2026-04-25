@@ -316,7 +316,7 @@ class BirthdayManager:
             user.send_today_notifications(self._factory)
 
 
-# Test cases
+# Main program to demonstrate the functionality of the birthday reminder system.
 
 def main():
     repository = CsvRepository("user_data.csv")

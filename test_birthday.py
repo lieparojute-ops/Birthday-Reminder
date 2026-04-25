@@ -1,5 +1,5 @@
 import unittest
-from Birthday_Reminder import Birthday, User, CsvRepository, NotificationFactory, ConsoleNotification
+from Birthday_Reminder import Birthday, User, CsvRepository, NotificationFactory, ConsoleNotification, BirthdayManager
 import os
 
 
@@ -81,6 +81,33 @@ class TestNotificationFactory(unittest.TestCase):
         text = birthday.get_reminder_text()
         self.assertIn("Alice", text) # Check that the reminder text contains the name of the person
         self.assertIn("Friend", text) # Check that the reminder text contains the relationship if provided
+
+class TestBirthdayManager(unittest.TestCase):
+
+    def test_add_and_find_user(self):
+        repo = CsvRepository("test_data.csv") # Use a test data file for the repository to avoid affecting real data
+        factory = NotificationFactory()
+        manager = BirthdayManager(repo, factory)
+
+        user = User("TestUser", "test@email.com")
+        manager.add_user(user) # Add a user to the manager and check that it can be found
+
+        found_user = manager.find_user("TestUser")
+        self.assertEqual(found_user.username, "TestUser") # Check that the found user's username is correct
+
+    def test_add_birthday_to_user(self):
+        repo = CsvRepository("test_data.csv")
+        factory = NotificationFactory()
+        manager = BirthdayManager(repo, factory)
+
+        user = User("TestUser", "test@email.com")
+        birthday = Birthday("Alice", "2000-01-01")
+
+        manager.add_user(user)
+        manager.add_birthday_to_user("TestUser", birthday)
+
+        self.assertEqual(len(user.birthdays), 1) # Check that the birthday was added to the user's list of birthdays
+
 
 if __name__ == "__main__":
     unittest.main()
