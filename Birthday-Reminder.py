@@ -265,42 +265,104 @@ class CsvRepository:
             return []
 
         return list(users.values())
+    
+
+# BirthdayManager class to manage users and their birthdays, handle data persistence, and send notifications.
+
+class BirthdayManager:
+    def __init__(self, repository, factory):
+        self._users = []
+        self._repository = repository
+        self._factory = factory
+
+    def add_user(self, user):
+        for existing_user in self._users:
+            if existing_user.username.lower() == user.username.lower():
+                raise ValueError("This user already exists.")
+        self._users.append(user)
+
+    def remove_user(self, username):
+        for user in self._users:
+            if user.username.lower() == username.lower():
+                self._users.remove(user)
+                return
+        raise ValueError("User not found.")
+
+    def find_user(self, username):
+        for user in self._users:
+            if user.username.lower() == username.lower():
+                return user
+        raise ValueError("User not found.")
+
+    def add_birthday_to_user(self, username, birthday):
+        user = self.find_user(username)
+        user.add_birthday(birthday)
+
+    def remove_birthday_from_user(self, username, birthday_name):
+        user = self.find_user(username)
+        user.remove_birthday(birthday_name)
+
+    def get_all_users(self):
+        return self._users
+
+    def save_data(self):
+        self._repository.save_users(self._users)
+
+    def load_data(self):
+        self._users = self._repository.load_users()
+
+    def send_all_today_notifications(self):
+        for user in self._users:
+            user.send_today_notifications(self._factory)
+
 
 # Test cases
 
 def main():
-    birthday = Birthday("Alice", "2006-04-30", notification_type="console")
-    birthday_1 = Birthday("Bob", "1990-04-23", "Wish him a happy birthday!", "email")
+    repository = CsvRepository("user_data.csv")
+    factory = NotificationFactory()
+    manager = BirthdayManager(repository, factory)
 
-    birthday_2 = Birthday("Tomas", "2001-12-05", "Cousin", "sms")
+    manager.load_data()
 
     user_1 = User("Mantas", "mantas@example.com")
-    user_1.add_birthday(birthday)
-    user_1.add_birthday(birthday_1)
-
     user_2 = User("Ema", "ema@example.com")
-    user_2.add_birthday(birthday_2)
 
-    users = [user_1, user_2]
+    try:
+        manager.find_user(user_1.username)
+    except ValueError:
+        manager.add_user(user_1)
 
-    factory = NotificationFactory()
-    repository = CsvRepository("user_data.csv") # the file will appear in the same folder as your Python file.
+    try:
+        manager.find_user(user_2.username)
+    except ValueError:
+        manager.add_user(user_2)
 
-    # Save users to CSV
-    repository.save_users(users) # If the file does not exist yet, Python creates it.
-    print("Data saved to CSV.\n")
+    birthday = Birthday("Alice", "2006-04-30", notification_type="console")
+    birthday_1 = Birthday("Bob", "1990-04-24", "Wish him a happy birthday!", "email")
+    birthday_2 = Birthday("Tomas", "2001-12-05", "Cousin", "sms")
 
+    try:
+        manager.add_birthday_to_user("Mantas", birthday)
+    except ValueError:
+        pass
 
-    # The load_users method opens the CSV file, reads rows, recreates User objects
-    # recreates Birthday objects, returns a list of users.
-    loaded_users = repository.load_users()
+    try:
+        manager.add_birthday_to_user("Mantas", birthday_1)
+    except ValueError:
+        pass
 
-    print("Loaded users from CSV:")
-    for user in loaded_users:
+    try:
+        manager.add_birthday_to_user("Ema", birthday_2)
+    except ValueError:
+        pass
+
+    manager.save_data()
+
+    for user in manager.get_all_users():
         print(user)
         print()
 
-        print("All birthdays:")
         for item in user.get_all_birthdays():
             print(item)
 
@@ -313,7 +375,6 @@ def main():
         print("Today's notifications:")
         user.send_today_notifications(factory)
         print("-" * 40)
-
 
 if __name__ == "__main__":
     main()
