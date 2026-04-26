@@ -352,6 +352,9 @@ class Menu:
         birth_date = input("Enter birth date (YYYY-MM-DD): ")
         note = input("Enter note (optional): ")
         notification_type = input("Notification type (console/email/sms): ")
+        
+        if not notification_type:
+            notification_type = "console"
 
         try:
             birthday = Birthday(name, birth_date, note, notification_type)
