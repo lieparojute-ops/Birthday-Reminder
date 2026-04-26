@@ -83,3 +83,4 @@ class Birthday:
             f"Notification type: {self.notification_type}, "
             f"Note: {note_text}"
         )
+        
