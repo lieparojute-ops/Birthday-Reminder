@@ -1,5 +1,6 @@
 from birthday import Birthday
 
+
 class Menu:
     def __init__(self, manager):
         self.manager = manager

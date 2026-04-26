@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+
 class Birthday:
     def __init__(self, name, birth_date, note="", notification_type="console"):
         self.name = name

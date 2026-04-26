@@ -2,6 +2,7 @@ import csv
 from birthday import Birthday
 from user import User
 
+
 class CsvRepository:
     def __init__(self, file_name="user_data.csv"):
         self.file_path = file_name

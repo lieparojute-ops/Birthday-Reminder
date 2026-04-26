@@ -1,7 +1,10 @@
-from notification import NotificationFactory
-from repository import CsvRepository
+from birthday import Birthday
+from user import User
+from notification_system import NotificationFactory
+from csv_repository import CsvRepository
 from manager import BirthdayManager
 from menu import Menu
+
 
 def main():
     repository = CsvRepository("user_data.csv")
