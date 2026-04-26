@@ -25,6 +25,10 @@ class User:
     def email(self, value):
         if not isinstance(value, str) or not value.strip():
             raise ValueError("Email cannot be empty.")
+
+        if "@" not in value or "." not in value:
+            raise ValueError("Email must be valid.")
+
         self._email = value.strip()
 
     @property
