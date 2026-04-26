@@ -29,7 +29,7 @@ class User:
 
     @property
     def birthdays(self):
-        return self._birthdays
+        return self._birthdays.copy()
 
     def add_birthday(self, birthday):
         if not isinstance(birthday, Birthday):
