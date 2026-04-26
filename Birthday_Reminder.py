@@ -42,7 +42,7 @@ class Birthday:
     def notification_type(self, value):
         if value not in ["email", "sms", "console"]:
             raise ValueError(
-            "Notification type must be 'email', 'sms', or 'console'."
+                "Notification type must be 'email', 'sms', or 'console'."
             )
         self._notification_type = value
 
@@ -159,6 +159,7 @@ class User:
             f"User: {self.username}, "
             f"Email: {self.email}, "
             f"Birthdays count: {len(self._birthdays)}"
+        )
 
 
 class NotificationService(ABC):
@@ -303,57 +304,53 @@ def main():
     factory = NotificationFactory()
     manager = BirthdayManager(repository, factory)
 
-    manager.load_data()
+    user_1 = User("Mantas", "mantas.tj@gmail.com")
+    user_2 = User("Ema", "ema.baltusyte@gmail.com")
 
-    user_1 = User("Mantas", "mantas@example.com")
-    user_2 = User("Ema", "ema@example.com")
+    manager.add_user(user_1)
+    manager.add_user(user_2)
 
-    try:
-        manager.find_user(user_1.username)
-    except ValueError:
-        manager.add_user(user_1)
+    birthday_1 = Birthday("Alice", "2006-04-30", notification_type="console")
+    birthday_2 = Birthday(
+        "Bob",
+        "1990-05-15",
+        "Call to wish him a happy birthday!",
+        "email"
+    )
+    birthday_3 = Birthday("Monika", "2001-12-05", "Buy a cake", "sms")
+    birthday_4 = Birthday("Greta", "1999-05-15", "Buy a birthday card", "email")
+    birthday_5 = Birthday("Sam", "2000-05-20", "", "console")
 
-    try:
-        manager.find_user(user_2.username)
-    except ValueError:
-        manager.add_user(user_2)
-
-    birthday = Birthday("Alice", "2006-04-30", notification_type="console")
-    birthday_1 = Birthday("Bob", "1990-04-24", "Wish him a happy birthday!", "email")
-    birthday_2 = Birthday("Tomas", "2001-12-05", "Cousin", "sms")
-
-    try:
-        manager.add_birthday_to_user("Mantas", birthday)
-    except ValueError:
-        pass
-
-    try:
-        manager.add_birthday_to_user("Mantas", birthday_1)
-    except ValueError:
-        pass
-
-    try:
-        manager.add_birthday_to_user("Ema", birthday_2)
-    except ValueError:
-        pass
+    manager.add_birthday_to_user("Mantas", birthday_1)
+    manager.add_birthday_to_user("Mantas", birthday_2)
+    manager.add_birthday_to_user("Ema", birthday_3)
+    manager.add_birthday_to_user("Ema", birthday_4)
+    manager.add_birthday_to_user("Ema", birthday_5)
 
     manager.save_data()
+
+    print("Data saved to CSV file.")
+    print("\n--- Reloaded data from CSV file ---\n")
+
+    manager.load_data()
 
     for user in manager.get_all_users():
         print(user)
         print()
 
-        for item in user.get_all_birthdays():
-            print(item)
+        print("All birthdays:")
+        for birthday in user.get_all_birthdays():
+            print(birthday)
 
         print()
         print("Upcoming reminders:")
-        for item in user.get_upcoming_birthdays(30):
-            print(item.get_reminder_text())
+        for birthday in user.get_upcoming_birthdays(30):
+            print(birthday.get_reminder_text())
 
         print()
         print("Today's notifications:")
         user.send_today_notifications(factory)
+
         print("-" * 40)
 
 

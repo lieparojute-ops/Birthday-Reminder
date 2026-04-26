@@ -1,13 +1,6 @@
 username,email,name,birth_date,note,notification_type
-Jack,jack.js@gmail.com,Alice,2006-04-30,Buy flowers,console
-Jack,jack.js@gmail.com,Jonas,2005-11-12,Call in the morning,email
-Jack,jack.js@gmail.com,Monika,2004-05-14,,sms
-Jack,jack.js@gmail.com,Bob,1990-04-24,Wish him a happy birthday!,email
-Ema,ema.baltusyte@yahoo.com,Tomas,2001-12-05,Send birthday card,sms
-Ema,ema.baltusyte@yahoo.com,Greta,1999-05-15,,email
-Ema,ema.baltusyte@yahoo.com,Paulius,2000-09-25,Surprise party,console
-Karolis,karolis.poc@outlook.com,Simona,1998-06-14,Book dinner,email
-Karolis,karolis.poc@outlook.com,Gabija,1997-05-20,,sms
-Karolis,karolis.poc@outlook.com,Ruta,2002-10-03,Buy cake,console
-Mantas,mantas@example.com,Alice,2006-04-30,,console
-Mantas,mantas@example.com,Bob,1990-04-24,Wish him a happy birthday!,email
+Mantas,mantas.tj@gmail.com,Alice,2006-04-30,,console
+Mantas,mantas.tj@gmail.com,Bob,1990-05-15,Call to wish him a happy birthday!,email
+Ema,ema.baltusyte@gmail.com,Monika,2001-12-05,Buy a cake,sms
+Ema,ema.baltusyte@gmail.com,Greta,1999-05-15,Buy a birthday card,email
+Ema,ema.baltusyte@gmail.com,Sam,2000-05-20,,console
