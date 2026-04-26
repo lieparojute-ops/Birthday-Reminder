@@ -299,59 +299,115 @@ class BirthdayManager:
             user.send_today_notifications(self._factory)
 
 
+class Menu:
+    def __init__(self, manager):
+        self.manager = manager
+
+    def display_menu(self):
+        print("\n--- Birthday Reminder Menu ---")
+        print("1. View all users and birthdays")
+        print("2. Add birthday")
+        print("3. Remove birthday")
+        print("4. View upcoming reminders")
+        print("5. Send today's notifications")
+        print("6. Save and exit")
+
+    def run(self):
+        while True:
+            self.display_menu()
+            choice = input("Choose an option: ")
+
+            if choice == "1":
+                self.handle_show_all()
+
+            elif choice == "2":
+                self.handle_add_birthday()
+
+            elif choice == "3":
+                self.handle_remove_birthday()
+
+            elif choice == "4":
+                self.handle_show_reminders()
+
+            elif choice == "5":
+                self.manager.send_all_today_notifications()
+
+            elif choice == "6":
+                self.manager.save_data()
+                print("Data saved. Goodbye!")
+                break
+
+            else:
+                print("Invalid option. Please try again.")
+
+    def handle_show_all(self):
+        for user in self.manager.get_all_users():
+            print(user)
+            for birthday in user.get_all_birthdays():
+                print(" ", birthday)
+
+    def handle_add_birthday(self):
+        username = input("Enter username: ")
+        name = input("Enter birthday person's name: ")
+        birth_date = input("Enter birth date (YYYY-MM-DD): ")
+        note = input("Enter note (optional): ")
+        notification_type = input("Notification type (console/email/sms): ")
+
+        try:
+            birthday = Birthday(name, birth_date, note, notification_type)
+            self.manager.add_birthday_to_user(username, birthday)
+            print("Birthday added.")
+        except ValueError as error:
+            print(f"Error: {error}")
+
+    def handle_remove_birthday(self):
+        username = input("Enter username: ")
+        name = input("Enter birthday person's name to remove: ")
+
+        try:
+            self.manager.remove_birthday_from_user(username, name)
+            print("Birthday removed.")
+        except ValueError as error:
+            print(f"Error: {error}")
+
+    def handle_show_reminders(self):
+        for user in self.manager.get_all_users():
+            print(f"\nReminders for {user.username}:")
+            for birthday in user.get_upcoming_birthdays(30):
+                print(birthday.get_reminder_text())
+
+
 def main():
     repository = CsvRepository("user_data.csv")
     factory = NotificationFactory()
     manager = BirthdayManager(repository, factory)
 
-    user_1 = User("Mantas", "mantas.tj@gmail.com")
-    user_2 = User("Ema", "ema.baltusyte@gmail.com")
-
-    manager.add_user(user_1)
-    manager.add_user(user_2)
-
-    birthday_1 = Birthday("Alice", "2006-04-30", notification_type="console")
-    birthday_2 = Birthday(
-        "Bob",
-        "1990-05-15",
-        "Call to wish him a happy birthday!",
-        "email"
-    )
-    birthday_3 = Birthday("Monika", "2001-12-05", "Buy a cake", "sms")
-    birthday_4 = Birthday("Greta", "1999-05-15", "Buy a birthday card", "email")
-    birthday_5 = Birthday("Sam", "2000-05-20", "", "console")
-
-    manager.add_birthday_to_user("Mantas", birthday_1)
-    manager.add_birthday_to_user("Mantas", birthday_2)
-    manager.add_birthday_to_user("Ema", birthday_3)
-    manager.add_birthday_to_user("Ema", birthday_4)
-    manager.add_birthday_to_user("Ema", birthday_5)
-
-    manager.save_data()
-
-    print("Data saved to CSV file.")
-    print("\n--- Reloaded data from CSV file ---\n")
-
     manager.load_data()
 
-    for user in manager.get_all_users():
-        print(user)
-        print()
+    if not manager.get_all_users():
+        user_1 = User("Mantas", "mantas.tj@gmail.com")
+        user_2 = User("Ema", "ema.baltusyte@gmail.com")
 
-        print("All birthdays:")
-        for birthday in user.get_all_birthdays():
-            print(birthday)
+        manager.add_user(user_1)
+        manager.add_user(user_2)
 
-        print()
-        print("Upcoming reminders:")
-        for birthday in user.get_upcoming_birthdays(30):
-            print(birthday.get_reminder_text())
+        manager.add_birthday_to_user(
+            "Mantas",
+            Birthday("Alice", "2006-04-30", notification_type="console")
+        )
+        manager.add_birthday_to_user(
+            "Mantas",
+            Birthday("Bob", "1990-05-15", "Send a birthday card!", "email")
+        )
+        manager.add_birthday_to_user(
+            "Ema",
+            Birthday("Monika", "2001-05-20", "Buy a cake", "sms")
+        )
 
-        print()
-        print("Today's notifications:")
-        user.send_today_notifications(factory)
+        manager.save_data()
 
-        print("-" * 40)
+    menu = Menu(manager)
+    menu.run()
 
 
 if __name__ == "__main__":
