@@ -23,12 +23,15 @@ class SMSNotification(NotificationService):
 
 
 class NotificationFactory:
+    def __init__(self):
+        self._notification_types = {
+            "console": ConsoleNotification,
+            "sms": SMSNotification,
+            "email": EmailNotification
+        }
+
     def create_notification(self, channel):
-        if channel == "console":
-            return ConsoleNotification()
-        elif channel == "sms":
-            return SMSNotification()
-        elif channel == "email":
-            return EmailNotification()
-        else:
+        try:
+            return self._notification_types[channel]()
+        except KeyError:
             raise ValueError("Unknown notification type")
