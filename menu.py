@@ -1,4 +1,5 @@
 from birthday import Birthday
+from user import User
 
 
 class Menu:
@@ -8,11 +9,12 @@ class Menu:
     def display_menu(self):
         print("\n--- Birthday Reminder Menu ---")
         print("1. View all users and birthdays")
-        print("2. Add birthday")
-        print("3. Remove birthday")
-        print("4. View upcoming reminders")
-        print("5. Send today's notifications")
-        print("6. Save and exit")
+        print("2. Add user")
+        print("3. Add birthday")
+        print("4. Remove birthday")
+        print("5. View upcoming reminders")
+        print("6. Send today's notifications")
+        print("7. Save and exit")
 
     def run(self):
         while True:
@@ -23,24 +25,38 @@ class Menu:
                 self.handle_show_all()
 
             elif choice == "2":
-                self.handle_add_birthday()
+                self.handle_add_user()
 
             elif choice == "3":
-                self.handle_remove_birthday()
+                self.handle_add_birthday()
 
             elif choice == "4":
-                self.handle_show_reminders()
+                self.handle_remove_birthday()
 
             elif choice == "5":
-                self.manager.send_all_today_notifications()
+                self.handle_show_reminders()
 
             elif choice == "6":
+                self.manager.send_all_today_notifications()
+
+            elif choice == "7":
                 self.manager.save_data()
                 print("Data saved. Goodbye!")
                 break
 
             else:
                 print("Invalid option. Please try again.")
+
+    def handle_add_user(self):
+        username = input("Enter username: ")
+        email = input("Enter email: ")
+
+        try:
+            user = User(username, email)
+            self.manager.add_user(user)
+            print("User added.")
+        except ValueError as error:
+            print(f"Error: {error}")
 
     def handle_show_all(self):
         for user in self.manager.get_all_users():
@@ -54,7 +70,7 @@ class Menu:
         birth_date = input("Enter birth date (YYYY-MM-DD): ")
         note = input("Enter note (optional): ")
         notification_type = input("Notification type (console/email/sms): ")
-        
+
         if not notification_type:
             notification_type = "console"
 
