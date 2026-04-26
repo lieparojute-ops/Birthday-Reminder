@@ -1,14 +1,11 @@
 import os
 import unittest
 
-from birthday_reminder import (
-    Birthday,
-    User,
-    CsvRepository,
-    NotificationFactory,
-    ConsoleNotification,
-    BirthdayManager,
-)
+from birthday import Birthday
+from user import User
+from csv_repository import CsvRepository
+from notification_system import NotificationFactory, ConsoleNotification
+from manager import BirthdayManager
 
 
 class TestBirthday(unittest.TestCase):
