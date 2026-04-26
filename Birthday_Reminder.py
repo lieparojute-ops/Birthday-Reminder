@@ -65,7 +65,6 @@ class Birthday:
         else:
             message = f"{self.name}'s birthday is in {days} days"
 
-        # Add note to message if it exists (optional!!!)
         if self.note.strip():
             message += f" ({self.note})"
 
@@ -80,8 +79,6 @@ class Birthday:
             f"Note: {note_text}"
         )
 
-
-# User class
 
 class User:
     def __init__(self, username, email):
@@ -117,9 +114,6 @@ class User:
         if not isinstance(birthday, Birthday):
             raise TypeError("Expected a Birthday instance.")
 
-        # .lower() method ensures that entries like "Alice" and "alice" are treated as the same
-        # This prevents duplicate entries for the same person with different capitalization
-
         for existing_birthday in self._birthdays:
             if existing_birthday.name.lower() == birthday.name.lower():
                 raise ValueError("This birthday already exists for this user.")
@@ -151,27 +145,21 @@ class User:
             if 0 <= birthday.days_until_birthday() <= days
         ]
 
-# Function to send notifications for today's birthdays
-# using factory to create notification based on birthday's notification type
-
     def send_today_notifications(self, factory):
         today_birthdays = self.get_today_birthdays()
 
         for birthday in today_birthdays:
-            notification = factory.create_notification( # Creates notification object
+            notification = factory.create_notification(
                 birthday.notification_type
             )
-            notification.send(birthday) # Calls the correct send method depending on type
+            notification.send(birthday)
 
     def __str__(self):
         return (
             f"User: {self.username}, "
             f"Email: {self.email}, "
-            f"Birthdays count: {len(self._birthdays)}" # Counts number of birthdays in the user's list
-        )
+            f"Birthdays count: {len(self._birthdays)}"
 
-
-# Notification system
 
 class NotificationService(ABC):
     @abstractmethod
@@ -194,8 +182,6 @@ class SMSNotification(NotificationService):
         print(f"Sending SMS: {birthday.get_reminder_text()}")
 
 
-# Factory pattern for creating notifications
-
 class NotificationFactory:
     def create_notification(self, channel):
         if channel == "console":
@@ -206,10 +192,7 @@ class NotificationFactory:
             return EmailNotification()
         else:
             raise ValueError("Unknown notification type")
-        
 
-# Repository for saving and loading user data to/from a CSV file
-# encoding="utf-8" ensures that the file can handle a wide range of characters(eg. emojis) without causing encoding errors.
 
 class CsvRepository:
     def __init__(self, file_name="user_data.csv"):
@@ -266,9 +249,7 @@ class CsvRepository:
             return []
 
         return list(users.values())
-    
 
-# BirthdayManager class to manage users and their birthdays, handle data persistence, and send notifications.
 
 class BirthdayManager:
     def __init__(self, repository, factory):
@@ -316,8 +297,6 @@ class BirthdayManager:
         for user in self._users:
             user.send_today_notifications(self._factory)
 
-
-# Main program to demonstrate the functionality of the birthday reminder system.
 
 def main():
     repository = CsvRepository("user_data.csv")

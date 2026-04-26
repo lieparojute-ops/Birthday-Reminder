@@ -72,6 +72,7 @@ class TestRepository(unittest.TestCase):
         self.assertEqual(loaded_users[0].birthdays[0].name, "Alice") # Check that the loaded birthday's name is correct
         self.assertEqual(loaded_users[0].birthdays[0].birth_date.strftime("%Y-%m-%d"),"2000-01-01") # Check that the loaded birthday's date is correct
 
+
 class TestNotificationFactory(unittest.TestCase):
 
     def test_invalid_notification_type(self):
@@ -89,6 +90,7 @@ class TestNotificationFactory(unittest.TestCase):
         text = birthday.get_reminder_text()
         self.assertIn("Alice", text) # Check that the reminder text contains the name of the person
         self.assertIn("Friend", text) # Check that the reminder text contains the relationship if provided
+
 
 class TestBirthdayManager(unittest.TestCase):
 
