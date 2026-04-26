@@ -47,6 +47,10 @@ class TestUser(unittest.TestCase):
         self.user.remove_birthday("Alice")
         self.assertEqual(len(self.user.birthdays), 0)
 
+    def test_invalid_email(self):
+        with self.assertRaises(ValueError):
+            User("TestUser", "invalid-email")
+
 
 class TestRepository(unittest.TestCase):
 
@@ -104,6 +108,27 @@ class TestBirthdayManager(unittest.TestCase):
 
         found_user = manager.find_user("TestUser")
         self.assertEqual(found_user.username, "TestUser")
+
+    def test_duplicate_user(self):
+        repo = CsvRepository("test_data.csv")
+        factory = NotificationFactory()
+        manager = BirthdayManager(repo, factory)
+
+        user_1 = User("TestUser", "test@email.com")
+        user_2 = User("testuser", "other@email.com")
+
+        manager.add_user(user_1)
+
+        with self.assertRaises(ValueError):
+            manager.add_user(user_2)
+
+    def test_remove_missing_user(self):
+        repo = CsvRepository("test_data.csv")
+        factory = NotificationFactory()
+        manager = BirthdayManager(repo, factory)
+
+        with self.assertRaises(ValueError):
+            manager.remove_user("Unknown")
 
     def test_add_birthday_to_user(self):
         repo = CsvRepository("test_data.csv")

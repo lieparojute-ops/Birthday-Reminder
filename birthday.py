@@ -58,7 +58,7 @@ class Birthday:
             except ValueError:
                 next_birthday = date(today.year + 1, 2, 28)
 
-    return (next_birthday - today).days
+        return (next_birthday - today).days
     
     def get_reminder_text(self):
         days = self.days_until_birthday()
