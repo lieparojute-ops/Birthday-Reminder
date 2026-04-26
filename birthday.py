@@ -28,7 +28,7 @@ class Birthday:
             self._birth_date = datetime.strptime(value, "%Y-%m-%d").date()
         except ValueError:
             raise ValueError("Birth date must be in YYYY-MM-DD format.")
-        
+
         if self._birth_date > date.today():
             raise ValueError("Birth date cannot be in the future.")
 
@@ -59,7 +59,7 @@ class Birthday:
                 next_birthday = date(today.year + 1, 2, 28)
 
         return (next_birthday - today).days
-    
+
     def get_reminder_text(self):
         days = self.days_until_birthday()
 

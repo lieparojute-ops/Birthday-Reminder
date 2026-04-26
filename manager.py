@@ -32,7 +32,7 @@ class BirthdayManager:
         user.remove_birthday(birthday_name)
 
     def get_all_users(self):
-        return self._users
+        return self._users.copy()
 
     def save_data(self):
         self._repository.save_users(self._users)

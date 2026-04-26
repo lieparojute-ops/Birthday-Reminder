@@ -98,48 +98,37 @@ class TestNotificationFactory(unittest.TestCase):
 
 class TestBirthdayManager(unittest.TestCase):
 
+    def setUp(self):
+        self.repo = CsvRepository("test_data.csv")
+        self.factory = NotificationFactory()
+        self.manager = BirthdayManager(self.repo, self.factory)
+
     def test_add_and_find_user(self):
-        repo = CsvRepository("test_data.csv")
-        factory = NotificationFactory()
-        manager = BirthdayManager(repo, factory)
-
         user = User("TestUser", "test@email.com")
-        manager.add_user(user)
+        self.manager.add_user(user)
 
-        found_user = manager.find_user("TestUser")
+        found_user = self.manager.find_user("TestUser")
         self.assertEqual(found_user.username, "TestUser")
 
     def test_duplicate_user(self):
-        repo = CsvRepository("test_data.csv")
-        factory = NotificationFactory()
-        manager = BirthdayManager(repo, factory)
-
         user_1 = User("TestUser", "test@email.com")
         user_2 = User("testuser", "other@email.com")
 
-        manager.add_user(user_1)
+        self.manager.add_user(user_1)
 
         with self.assertRaises(ValueError):
-            manager.add_user(user_2)
+            self.manager.add_user(user_2)
 
     def test_remove_missing_user(self):
-        repo = CsvRepository("test_data.csv")
-        factory = NotificationFactory()
-        manager = BirthdayManager(repo, factory)
-
         with self.assertRaises(ValueError):
-            manager.remove_user("Unknown")
+            self.manager.remove_user("Unknown")
 
     def test_add_birthday_to_user(self):
-        repo = CsvRepository("test_data.csv")
-        factory = NotificationFactory()
-        manager = BirthdayManager(repo, factory)
-
         user = User("TestUser", "test@email.com")
         birthday = Birthday("Alice", "2000-01-01")
 
-        manager.add_user(user)
-        manager.add_birthday_to_user("TestUser", birthday)
+        self.manager.add_user(user)
+        self.manager.add_birthday_to_user("TestUser", birthday)
 
         self.assertEqual(len(user.birthdays), 1)
 
