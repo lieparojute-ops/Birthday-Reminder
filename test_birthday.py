@@ -76,6 +76,18 @@ class TestRepository(unittest.TestCase):
             "2000-01-01"
         )
 
+    def test_save_and_load_user_without_birthdays(self):
+        repo = CsvRepository("test_data.csv")
+
+        user = User("EmptyUser", "empty@email.com")
+
+        repo.save_users([user])
+        loaded_users = repo.load_users()
+
+        self.assertEqual(len(loaded_users), 1)
+        self.assertEqual(loaded_users[0].username, "EmptyUser")
+        self.assertEqual(len(loaded_users[0].birthdays), 0)
+
 
 class TestNotificationFactory(unittest.TestCase):
 
