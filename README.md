@@ -108,8 +108,22 @@ Each class behaves differently, but they are used through a common interface.
 
 The application uses the **Factory Method pattern**:
 
+The factory stores available notification types in a dictionary and creates the correct object dynamically based on the selected type.
+
 ```python
 class NotificationFactory:
+    def __init__(self):
+        self._notification_types = {
+            "console": ConsoleNotification,
+            "sms": SMSNotification,
+            "email": EmailNotification
+        }
+
+    def create_notification(self, channel):
+        try:
+            return self._notification_types[channel]()
+        except KeyError:
+            raise ValueError("Unknown notification type")
 ```
 
 It creates notification objects based on type (console, email, sms).
@@ -133,10 +147,34 @@ This structure keeps responsibilities clearly separated.
 
 ### File Handling
 
-The system uses a **CSV file** to store data:
+The system uses a CSV file to store user and birthday data.
 
-* Saving: `save_users()`
-* Loading: `load_users()`
+Data is written to the file using the `save_users()` method:
+
+```python
+def save_users(self, users):
+    writer.writerow([
+        user.username,
+        user.email,
+        birthday.name,
+        birthday.birth_date.strftime("%Y-%m-%d"),
+        birthday.note,
+        birthday.notification_type
+    ])
+```
+
+Data is loaded from the file using the `load_users` method:
+
+```python
+if row["name"] and row["birth_date"]:
+    birthday = Birthday(
+        row["name"],
+        row["birth_date"],
+        row["note"],
+        row["notification_type"] or "console"
+    )
+    users[username].add_birthday(birthday)
+```
 
 This ensures that user data persists between program executions.
 
@@ -189,12 +227,3 @@ Future improvements could include:
 * Real email/SMS integration
 * Database instead of CSV storage
 * Additional notification types
-
----
-
-## 5. Resources
-
-* Python documentation
-* PEP8 style guidelines
-* Markdown documentation
-* Unit testing documentation
