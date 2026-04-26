@@ -1,12 +1,10 @@
-# Birthday-Reminder
-
-# Birthday Reminder Application
+# Birthday reminder system
 
 ## 1. Introduction
 
-### What is this application?
+### What is this system?
 
-This project is a **Birthday Reminder system** developed using Object-Oriented Programming (OOP) principles in Python. The application allows users to store and manage birthdays, receive reminders, and persist data between program runs.
+This project is a **Birthday Reminder system** developed using Object-Oriented Programming (OOP) principles in Python. The system allows users to store and manage birthdays, receive reminders, and persist data between program runs.
 
 ### How to run the program
 
@@ -31,17 +29,29 @@ The program uses a console-based menu system for interaction.
 
 ---
 
+### Project Structure
+
+- birthday.py – Birthday class and logic  
+- user.py – User management  
+- manager.py – Main system logic  
+- csv_repository.py – File handling  
+- notification_system.py – Notifications and factory  
+- menu.py – User interface  
+- test_birthday.py – Unit tests
+
+---
+
 ## 2. Body / Analysis
 
 ### Functional Requirements Implementation
 
 The application fully implements the Birthday Reminder system requirements:
 
-* Add/remove birthdays
-* Print birthday reminders
-* Save data to a file (CSV)
-* Send notifications on the birthday
-* Support multiple users
+* Add/remove birthdays – implemented in BirthdayManager methods such as add_birthday_to_user() and remove_birthday_from_user()
+* Print birthday reminders – implemented using Birthday.get_reminder_text() and Menu display
+* Save data to a file (CSV) – implemented in CsvRepository.save_users()
+* Send notifications – implemented using NotificationFactory and send_today_notifications()
+* Support multiple users – handled through BirthdayManager user list
 
 These are handled through a modular system consisting of classes such as `User`, `Birthday`, `BirthdayManager`, and `CsvRepository`.
 
@@ -134,6 +144,8 @@ This pattern was chosen because:
 * It allows easy extension of new notification types
 * It improves flexibility and maintainability
 
+Compared to using conditional statements (if/else), the Factory Method pattern provides a more scalable and maintainable way to create objects.
+
 ---
 
 ### Composition / Aggregation
@@ -147,36 +159,41 @@ This structure keeps responsibilities clearly separated.
 
 ### File Handling
 
-The system uses a CSV file to store user and birthday data.
+The system uses a CSV file to store user and birthday data. File operations are implemented in the `CsvRepository` class.
 
-Data is written to the file using the `save_users()` method:
+Data is written to the file using the `save_users()` method. Each user and their birthdays are saved. Users without birthdays are also stored to prevent data loss.
 
 ```python
-def save_users(self, users):
-    writer.writerow([
-        user.username,
-        user.email,
-        birthday.name,
-        birthday.birth_date.strftime("%Y-%m-%d"),
-        birthday.note,
-        birthday.notification_type
-    ])
+for user in users:
+    if not user.birthdays:
+        writer.writerow([user.username, user.email, "", "", "", ""])
+    else:
+        for birthday in user.birthdays:
+            writer.writerow([
+                user.username,
+                birthday.name,
+                birthday.birth_date.strftime("%Y-%m-%d")
+            ])
 ```
 
-Data is loaded from the file using the `load_users` method:
+Data is loaded from the file using the `load_users` method. The system recreates users and only creates birthday objects when data exists.
 
 ```python
+if username not in users:
+    users[username] = User(username, email)
+
 if row["name"] and row["birth_date"]:
-    birthday = Birthday(
-        row["name"],
-        row["birth_date"],
-        row["note"],
-        row["notification_type"] or "console"
-    )
+    birthday = Birthday(row["name"], row["birth_date"])
     users[username].add_birthday(birthday)
 ```
 
-This ensures that user data persists between program executions.
+This ensures that all user data is preserved between program executions.
+
+---
+
+### Error Handling
+
+The program uses exceptions (such as ValueError) to validate user input and prevent invalid data from being processed. This ensures that incorrect values (e.g., invalid dates or emails) are handled safely and do not break the program.
 
 ---
 
