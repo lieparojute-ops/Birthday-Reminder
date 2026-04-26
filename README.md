@@ -1,67 +1,99 @@
-# Birthday reminder system
+# Birthday Reminder System
 
 ## 1. Introduction
 
-### What is this system?
+### 1.1 Purpose of the System
 
-This project is a **Birthday Reminder system** developed using Object-Oriented Programming (OOP) principles in Python. The system allows users to store and manage birthdays, receive reminders, and persist data between program runs.
+The Birthday Reminder System is a multi-user, console-based application developed in Python using Object-Oriented Programming (OOP) principles. The purpose of the system is to allow users to manage birthday records, store them persistently in a file, view upcoming birthdays, and receive notifications when a birthday occurs.
 
-### How to run the program
+### 1.2 Functional Overview
 
-1. Make sure Python is installed.
-2. Open the project folder.
-3. Run the program using:
+The system provides the following functionality:
 
-   ```bash
-   python main.py
-   ```
-
-### How to use the program
-
-* Add users with email addresses
-* Add birthdays for each user
+* Add and remove users
+* Assign multiple birthdays to each user
 * View all stored birthdays
-* View upcoming reminders
-* Send notifications for today’s birthdays
-* Save data to file before exiting
+* Display upcoming birthday reminders
+* Send notifications for birthdays occurring today
+* Save and load data using CSV files
 
-The program uses a console-based menu system for interaction.
+### 1.3 Program Execution
 
----
+The program is started by running:
 
-### Project Structure
+```bash
+python main.py
+```
 
-- birthday.py – Birthday class and logic  
-- user.py – User management  
-- manager.py – Main system logic  
-- csv_repository.py – File handling  
-- notification_system.py – Notifications and factory  
-- menu.py – User interface  
-- test_birthday.py – Unit tests
+Execution flow:
 
----
-
-## 2. Body / Analysis
-
-### Functional Requirements Implementation
-
-The application fully implements the Birthday Reminder system requirements:
-
-* Add/remove birthdays – implemented in BirthdayManager methods such as add_birthday_to_user() and remove_birthday_from_user()
-* Print birthday reminders – implemented using Birthday.get_reminder_text() and Menu display
-* Save data to a file (CSV) – implemented in CsvRepository.save_users()
-* Send notifications – implemented using NotificationFactory and send_today_notifications()
-* Support multiple users – handled through BirthdayManager user list
-
-These are handled through a modular system consisting of classes such as `User`, `Birthday`, `BirthdayManager`, and `CsvRepository`.
+1. The system initializes repository, notification factory, and manager
+2. Stored data is loaded from a CSV file
+3. A console menu is displayed
+4. The user interacts with the system via menu options
+5. Actions are processed through the manager layer
+6. Notifications are generated if required
+7. Data is saved before program termination
 
 ---
 
-### OOP Principles
+## 2. System Architecture
 
-#### Encapsulation
+### 2.1 Main Components
 
-Encapsulation is used by protecting internal data with private attributes and exposing them through properties.
+The system is divided into modular components:
+
+* `Birthday` – represents birthday data and logic
+* `User` – manages user information and associated birthdays
+* `BirthdayManager` – controls application logic
+* `CsvRepository` – handles data persistence
+* `NotificationFactory` – creates notification objects
+* `Menu` – provides user interface
+
+### 2.2 Design Structure
+
+The architecture follows a layered approach:
+
+* Presentation Layer → Menu
+* Business Logic Layer → Manager, User, Birthday
+* Data Layer → CSV Repository
+* Service Layer → Notification System
+
+This separation improves maintainability and readability.
+
+---
+
+## 3. Functional Requirements Implementation
+
+The system satisfies all core requirements:
+
+### 3.1 Birthday Management
+
+* Adding/removing birthdays is handled by `BirthdayManager`
+* Validation ensures no duplicates per user
+
+### 3.2 Data Persistence
+
+* Data is stored in CSV format via `CsvRepository`
+* Users and birthdays are reconstructed during loading
+
+### 3.3 Notifications
+
+* Notifications are generated for birthdays occurring today
+* Different notification types are supported (console, email, SMS)
+
+### 3.4 Multi-user Support
+
+* Each user can have multiple associated birthdays
+* Users are uniquely identified by username
+
+---
+
+## 4. Object-Oriented Programming Principles
+
+### 4.1 Encapsulation
+
+Encapsulation is implemented by restricting direct access to class attributes and exposing them through properties.
 
 Example:
 
@@ -71,13 +103,13 @@ def birthdays(self):
     return self._birthdays.copy()
 ```
 
-This prevents external modification of internal state.
+This prevents unintended modification of internal state.
 
 ---
 
-#### Abstraction
+### 4.2 Abstraction
 
-Abstraction is implemented using an abstract base class:
+Abstraction is achieved using an abstract base class:
 
 ```python
 class NotificationService(ABC):
@@ -86,161 +118,193 @@ class NotificationService(ABC):
         pass
 ```
 
-This defines a common interface for all notification types.
+Concrete implementations (Console, Email, SMS) define specific behavior while sharing a common interface.
 
 ---
 
-#### Inheritance
+### 4.3 Composition
 
-Notification classes inherit from the abstract base class:
+Composition is used where a `User` object contains multiple `Birthday` objects.
+
+* A user *owns* its birthdays
+* Birthdays cannot exist independently in the system context
+
+This models real-world relationships accurately.
+
+---
+
+### 4.4 Polymorphism
+
+Polymorphism is demonstrated through the notification system:
+
+* All notification types implement the same `send()` method
+* Different behaviors are executed depending on the object type
+
+---
+
+### 4.5 SOLID Principles
+
+The system follows several SOLID principles:
+
+* **Single Responsibility Principle (SRP)**  
+  Each class has a single, clearly defined responsibility.  
+  For example, `CsvRepository` handles only data storage, while `BirthdayManager` handles application logic.
+
+* **Open/Closed Principle (OCP)**  
+  The system is open for extension but closed for modification.  
+  New notification types can be added without modifying existing classes.
+
+* **Liskov Substitution Principle (LSP)**  
+  All notification types (Console, Email, SMS) can be used interchangeably through the `NotificationService` interface without affecting correctness.
+
+* **Dependency Inversion Principle (DIP)**  
+  High-level modules such as `BirthdayManager` depend on abstractions (repository and factory) rather than concrete implementations.
+
+---
+
+### 4.6 Inheritance
+
+Inheritance is used in the notification system, where concrete notification classes inherit from the abstract base class `NotificationService`.
+
+This allows shared structure and behavior to be defined once, while enabling specialized implementations in subclasses.
+
+For example:
+- `ConsoleNotification`
+- `EmailNotification`
+- `SMSNotification`
+
+All of these classes inherit from `NotificationService` and implement the `send()` method.
+
+This promotes code reuse, consistency, and extensibility.
+
+---
+
+## 5. Design Patterns
+
+### 5.1 Factory Pattern
+
+The system implements the Factory Method pattern through the `NotificationFactory` class.
+
+The purpose of this pattern is to create notification objects dynamically based on a specified type (e.g., email, SMS, console), without exposing the object creation logic to the client code.
+
+Example:
 
 ```python
-class EmailNotification(NotificationService):
+factory.create_notification("email")
 ```
 
-This allows reuse of structure while implementing different behavior.
+This pattern is particularly suitable in this system because multiple notification types share a common interface but differ in behavior.
+
+In scenarios where different types of notification objects with varying behaviours and characteristics are required, the Factory Pattern provides a flexible and scalable solution.
+
+Compared to directly instantiating objects, this approach:
+
+Reduces coupling between classes
+Centralizes object creation logic
+Allows easy addition of new notification types without modifying existing code
+
+Alternative patterns such as the Singleton Pattern would not be suitable here, as the system requires multiple interchangeable notification objects rather than a single shared instance.
 
 ---
 
-#### Polymorphism
+## 6. Exception Handling
 
-Different notification types implement the same method:
+The system includes validation and error handling:
 
-```python
-notification.send(birthday)
-```
+* Invalid date formats are rejected
+* Future birth dates are not allowed
+* Invalid email formats raise errors
+* Duplicate entries are prevented
+* Missing files are handled smoothly
 
-Each class behaves differently, but they are used through a common interface.
-
----
-
-### Design Pattern
-
-The application uses the **Factory Method pattern**:
-
-The factory stores available notification types in a dictionary and creates the correct object dynamically based on the selected type.
-
-```python
-class NotificationFactory:
-    def __init__(self):
-        self._notification_types = {
-            "console": ConsoleNotification,
-            "sms": SMSNotification,
-            "email": EmailNotification
-        }
-
-    def create_notification(self, channel):
-        try:
-            return self._notification_types[channel]()
-        except KeyError:
-            raise ValueError("Unknown notification type")
-```
-
-It creates notification objects based on type (console, email, sms).
-
-This pattern was chosen because:
-
-* It separates object creation from usage
-* It allows easy extension of new notification types
-* It improves flexibility and maintainability
-
-Compared to using conditional statements (if/else), the Factory Method pattern provides a more scalable and maintainable way to create objects.
+This ensures robustness and reliability.
 
 ---
 
-### Composition / Aggregation
+## 7. Testing
 
-* A `User` contains multiple `Birthday` objects → **composition**
-* `BirthdayManager` manages users, repository, and notifications → **aggregation**
-
-This structure keeps responsibilities clearly separated.
-
----
-
-### File Handling
-
-The system uses a CSV file to store user and birthday data. File operations are implemented in the `CsvRepository` class.
-
-Data is written to the file using the `save_users()` method. Each user and their birthdays are saved. Users without birthdays are also stored to prevent data loss.
-
-```python
-for user in users:
-    if not user.birthdays:
-        writer.writerow([user.username, user.email, "", "", "", ""])
-    else:
-        for birthday in user.birthdays:
-            writer.writerow([
-                user.username,
-                birthday.name,
-                birthday.birth_date.strftime("%Y-%m-%d")
-            ])
-```
-
-Data is loaded from the file using the `load_users` method. The system recreates users and only creates birthday objects when data exists.
-
-```python
-if username not in users:
-    users[username] = User(username, email)
-
-if row["name"] and row["birth_date"]:
-    birthday = Birthday(row["name"], row["birth_date"])
-    users[username].add_birthday(birthday)
-```
-
-This ensures that all user data is preserved between program executions.
-
----
-
-### Error Handling
-
-The program uses exceptions (such as ValueError) to validate user input and prevent invalid data from being processed. This ensures that incorrect values (e.g., invalid dates or emails) are handled safely and do not break the program.
-
----
-
-### Testing
-
-The application includes unit tests using the `unittest` framework.
+Unit tests are implemented using the `unittest` framework.
 
 Test coverage includes:
 
 * Birthday validation
-* User operations
-* Repository save/load
-* Notification factory
-* Manager logic
+* User operations (add/remove)
+* Duplicate detection
+* Repository save/load functionality
 
 Example:
 
 ```python
 with self.assertRaises(ValueError):
-    manager.add_user(user_2)
+    Birthday("Alice", "wrong-date")
+```
+
+Testing ensures correctness and reduces bugs.
+
+---
+
+## 8. Example Usage
+
+Example interaction:
+
+```
+--- Birthday Reminder Menu ---
+1. Add user
+2. Add birthday
+
+Enter username: John
+Enter email: john@email.com
+
+Enter birthday name: Alice
+Enter birth date: 2000-01-01
+
+Upcoming reminder:
+Alice's birthday is in 5 days
+```
+
+Example notification:
+
+```
+Sending email: Today is Alice's birthday!
 ```
 
 ---
 
-## 3. Results
+## 9. Limitations
 
-* The application successfully manages multiple users and birthdays
-* File persistence ensures data is not lost between runs
-* OOP principles improve code structure and maintainability
-* One challenge was handling edge cases such as duplicate users and empty data
-* Another challenge was ensuring proper validation and error handling
+* No graphical user interface (CLI only)
+* Email and SMS notifications are simulated
+* Data storage is limited to CSV format
+* No authentication system
 
 ---
 
-## 4. Conclusions
+## 10. Possible Improvements
 
-This project demonstrates the practical application of OOP principles in Python.
+* Implement real email/SMS integration
+* Add graphical user interface (GUI)
+* Use database instead of CSV
+* Add authentication and user roles
+* Extend notification scheduling
 
-The result is a modular and extendable system that:
+---
 
-* Manages birthdays efficiently
-* Supports multiple users
-* Provides flexible notification handling
+## 11. Results
 
-Future improvements could include:
+- The system successfully implements a multi-user birthday reminder application using OOP principles  
+- Functional requirements such as data persistence, notifications, and user management were fully achieved  
+- One challenge was designing a flexible notification system, which was solved using the Factory pattern  
+- Input validation and error handling improved system robustness  
+- Unit testing ensured reliability of core functionality
 
-* GUI interface instead of console menu
-* Real email/SMS integration
-* Database instead of CSV storage
-* Additional notification types
+---
+
+## 12. Conclusion
+
+The Birthday Reminder System successfully demonstrates the practical application of Object-Oriented Programming principles, including encapsulation, abstraction, inheritance, and polymorphism.
+
+The system achieves its goal of managing birthday data, providing reminders, and persisting information using a modular and extensible architecture. The use of design patterns, such as the Factory Pattern, improves flexibility and maintainability.
+
+Overall, the coursework resulted in a functional, well-structured application that meets all defined requirements and provides a strong foundation for future enhancements such as real notification integration and graphical interfaces.
+
+---
