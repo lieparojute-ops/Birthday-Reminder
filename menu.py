@@ -10,11 +10,12 @@ class Menu:
         print("\n--- Birthday Reminder Menu ---")
         print("1. View all users and birthdays")
         print("2. Add user")
-        print("3. Add birthday")
-        print("4. Remove birthday")
-        print("5. View upcoming reminders")
-        print("6. Send today's notifications")
-        print("7. Save and exit")
+        print("3. Remove user")
+        print("4. Add birthday")
+        print("5. Remove birthday")
+        print("6. View upcoming reminders")
+        print("7. Send today's notifications")
+        print("8. Save and exit")
 
     def run(self):
         while True:
@@ -28,18 +29,21 @@ class Menu:
                 self.handle_add_user()
 
             elif choice == "3":
-                self.handle_add_birthday()
+                self.handle_remove_user()
 
             elif choice == "4":
-                self.handle_remove_birthday()
+                self.handle_add_birthday()
 
             elif choice == "5":
-                self.handle_show_reminders()
+                self.handle_remove_birthday()
 
             elif choice == "6":
-                self.manager.send_all_today_notifications()
+                self.handle_show_reminders()
 
             elif choice == "7":
+                self.manager.send_all_today_notifications()
+
+            elif choice == "8":
                 self.manager.save_data()
                 print("Data saved. Goodbye!")
                 break
@@ -55,6 +59,15 @@ class Menu:
             user = User(username, email)
             self.manager.add_user(user)
             print("User added.")
+        except ValueError as error:
+            print(f"Error: {error}")
+
+    def handle_remove_user(self):
+        username = input("Enter username to remove: ")
+
+        try:
+            self.manager.remove_user(username)
+            print("User removed.")
         except ValueError as error:
             print(f"Error: {error}")
 

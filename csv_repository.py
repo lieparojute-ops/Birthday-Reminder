@@ -21,15 +21,25 @@ class CsvRepository:
             ])
 
             for user in users:
-                for birthday in user.birthdays:
+                if not user.birthdays:
                     writer.writerow([
                         user.username,
                         user.email,
-                        birthday.name,
-                        birthday.birth_date.strftime("%Y-%m-%d"),
-                        birthday.note,
-                        birthday.notification_type
+                        "",
+                        "",
+                        "",
+                        ""
                     ])
+                else:
+                    for birthday in user.birthdays:
+                        writer.writerow([
+                            user.username,
+                            user.email,
+                            birthday.name,
+                            birthday.birth_date.strftime("%Y-%m-%d"),
+                            birthday.note,
+                            birthday.notification_type
+                        ])
 
     def load_users(self):
         users = {}
@@ -45,14 +55,14 @@ class CsvRepository:
                     if username not in users:
                         users[username] = User(username, email)
 
-                    birthday = Birthday(
-                        row["name"],
-                        row["birth_date"],
-                        row["note"],
-                        row["notification_type"]
-                    )
-
-                    users[username].add_birthday(birthday)
+                    if row["name"] and row["birth_date"]:
+                        birthday = Birthday(
+                            row["name"],
+                            row["birth_date"],
+                            row["note"],
+                            row["notification_type"] or "console"
+                        )
+                        users[username].add_birthday(birthday)
 
         except FileNotFoundError:
             return []
